@@ -99,8 +99,7 @@ class Tello:
     def __init__(self,
                  host=TELLO_IP,
                  retry_count=RETRY_COUNT,
-                 vs_udp=VS_UDP_PORT,
-                 interface_name=None):
+                 vs_udp=VS_UDP_PORT):
 
         global threads_initialized, client_socket, drones
 
@@ -113,8 +112,6 @@ class Tello:
         if not threads_initialized:
             # Run Tello command responses UDP receiver on background
             client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            if interface_name:
-                client_socket.setsockopt(socket.SOL_SOCKET, 25, interface_name)
             client_socket.bind(("", Tello.CONTROL_UDP_PORT))
             response_receiver_thread = Thread(target=Tello.udp_response_receiver)
             response_receiver_thread.daemon = True
