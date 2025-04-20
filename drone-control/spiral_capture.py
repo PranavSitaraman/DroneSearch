@@ -67,7 +67,7 @@ def start_data_collection(tello, frame_reader):
 
             ts_log.write(f"{ts}\n")
             ts_log.flush()
-            time.sleep(0.1)
+            time.sleep(0.1)  # 10Hz
 
         ts_log.close()
 
@@ -86,29 +86,29 @@ def main():
     frame_reader = tello.get_frame_read()
     time.sleep(2)
 
-    print("🛫 Taking off...")
-    tello.takeoff()
-
-    print("➡️ Moving forward 50 cm")
-    tello.move_forward(50)
-
-    print("📸 Starting data collection + spinning")
+    print("📸 Starting data collection thread")
     thread = start_data_collection(tello, frame_reader)
 
-    try:
-        # Spin in place while collecting data
-        for _ in range(12):  # 12 x 30° = 360°
-            tello.rotate_clockwise(30)
-            time.sleep(0.1)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        logging_active[0] = False
-        thread.join()
-        tello.streamoff()
-        tello.land()
-        tello.end()
-        cv2.destroyAllWindows()
+    print("🛫 Taking off...")
+    tello.takeoff()
+    time.sleep(1)
+
+    print("🔁 Moving forward while spinning (spiral path)")
+    # Spiral: 10x (10 cm forward + 36° turn) = 100cm forward + 360°
+    for _ in range(10):
+        tello.move_forward(10)
+        time.sleep(1)
+        tello.rotate_clockwise(36)
+        time.sleep(1)
+
+    print("🛬 Landing")
+    tello.land()
+
+    logging_active[0] = False
+    thread.join()
+    tello.streamoff()
+    tello.end()
+    cv2.destroyAllWindows()
 
 # Shared state flag for logging loop
 logging_active = [True]
