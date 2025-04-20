@@ -4,8 +4,8 @@ import time
 
 # Replace with actual IPs if in AP mode or using EDU swarm
 TELLO_IPS = [
-    '192.168.10.1',  # Drone 1 (default)
-    '192.168.10.2',  # Drone 2
+    '192.168.10.2',  # Drone 1 (default)
+    '192.168.10.3',  # Drone 2
     # Add more IPs as needed
 ]
 
@@ -13,14 +13,13 @@ def control_drone(ip):
     drone = Tello(host=ip)
     drone.connect()
     print(f"[{ip}] Battery: {drone.get_battery()}%")
-
-    drone.takeoff()
     time.sleep(3)
 
-    drone.move_forward(50)
+    drone.streamon()
+    frame_reader = drone.get_frame_read()
     time.sleep(2)
+    drone.streamoff()
 
-    drone.land()
     print(f"[{ip}] Landed.")
 
 def main():
