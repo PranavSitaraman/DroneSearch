@@ -1,33 +1,45 @@
-from djitellopy import Tello
+import socket
 import threading
 import time
 
-# Replace with actual IPs if in AP mode or using EDU swarm
-# Find IP addresses using `netsh interface ip show address` on Windows
-TELLO_IPS = [
-    '192.168.10.2',  # Drone 1 (default)
-    '192.168.10.3',  # Drone 2
-    # Add more IPs as needed
+# === Configure this: (drone_ip is always 192.168.10.1 in AP mode)
+# ('drone_ip', 'local_interface_ip', local_udp_port)
+DRONES = [
+    ('192.168.10.1', '192.168.10.3', 9000),  # USB Wi-Fi
+    # ('192.168.10.1', '192.168.10.3', 9001),  # Internal Wi-Fi
 ]
 
-def control_drone(ip):
-    drone = Tello(host=ip)
-    drone.connect()
-    print(f"[{ip}] Battery: {drone.get_battery()}%")
-    time.sleep(3)
+# === Send command and wait for response
+def tello_command(sock, drone_ip, cmd):
+    try:
+        sock.sendto(cmd.encode('utf-8'), (drone_ip, 8889))
+        response, _ = sock.recvfrom(1024)
+        return response.decode('utf-8')
+    except socket.timeout:
+        return "timeout"
+    except Exception as e:
+        return f"error: {e}"
 
-    drone.streamon()
-    frame_reader = drone.get_frame_read()
-    time.sleep(2)
-    drone.streamoff()
+# === Control one drone
+def control_drone(drone_ip, local_ip, local_port):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.bind((local_ip, local_port))
+    sock.settimeout(5)
 
-    print(f"[{ip}] Landed.")
+    print(f"[{local_ip}:{local_port}] → Sending 'command'")
+    print("↪", tello_command(sock, drone_ip, 'command'))
 
+    print(f"[{local_ip}:{local_port}] → Asking 'battery?'")
+    print("↪", tello_command(sock, drone_ip, 'battery?'))
+
+    sock.close()
+
+# === Main multithreaded runner
 def main():
     threads = []
-
-    for ip in TELLO_IPS:
-        t = threading.Thread(target=control_drone, args=(ip,))
+    for drone_ip, local_ip, local_port in DRONES:
+        t = threading.Thread(target=control_drone, args=(drone_ip, local_ip, local_port))
         t.start()
         threads.append(t)
 
