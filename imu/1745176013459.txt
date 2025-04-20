@@ -1,0 +1,17 @@
+timestamp: 1745176013.459287
+battery: 17
+height_cm: 80
+flight_time_s: 19
+speed_x: 0
+speed_y: 0
+speed_z: 0
+acc_x: 1.0
+acc_y: -2.0
+acc_z: -1014.0
+tof_cm: 78
+temperature_C: 84.5
+pitch: None
+roll: None
+yaw: None
+barometer_cm: -40.788151
+wifi_snr: 90.0
