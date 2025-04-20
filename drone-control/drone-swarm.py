@@ -3,6 +3,7 @@ import threading
 import time
 
 # Replace with actual IPs if in AP mode or using EDU swarm
+# Find IP addresses using `netsh interface ip show address` on Windows
 TELLO_IPS = [
     '192.168.10.2',  # Drone 1 (default)
     '192.168.10.3',  # Drone 2
