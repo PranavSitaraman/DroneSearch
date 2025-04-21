@@ -1,9 +1,7 @@
-# DroneSearch
+# Drone Search: Tellodrone
 
-### Requirements 
+## Multi-drone planning with DJI Tello
 
-Install DJI Tello API library
+### Presentation: [https://docs.google.com/presentation/d/1uqAF0qKzk4tiwphUxbgDQT-w39WqSg2N0FXhYic9ljM/edit?usp=sharing](https://docs.google.com/presentation/d/1uqAF0qKzk4tiwphUxbgDQT-w39WqSg2N0FXhYic9ljM/edit?usp=sharing)
 
-```
-pip install djitellopy
-````
+### Video: [https://youtu.be/nAQDcNXZ25I](https://youtu.be/nAQDcNXZ25I)
